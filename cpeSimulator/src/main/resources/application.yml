@@ -1,0 +1,109 @@
+server:
+  port: 32443
+  ssl:
+    key-store: classpath:tool.keystore
+    key-store-type: JKS
+    key-store-password: 123456
+
+http:
+  port: 32009
+
+
+
+
+spring:
+  application:
+    name: cpe-service
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:cpeData
+    username: root
+    password: hms@2020
+  sql:
+    init:
+#      schema-locations: classpath:db/initSql.sql
+      data-locations: classpath:db/data-h2.sql
+
+logging:
+  level:
+    root: info
+  file:
+    name: '%d{HH:MM}.log'
+  pattern:
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n'
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+      file-name-pattern: '%d{yyyy-MM-dd}.%i.log.gz'
+      total-size-cap: 200MB
+      max-history: 3
+
+
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+
+cwmpver: cwmp_1_0
+
+BS:
+  Ip:
+
+
+snFilePath: D:\BsSimulator\snRegister.xlsx
+
+kpi:
+  counterFilePath: D:\BsSimulator\Counter.xlsm
+
+reportAlarm: false
+
+reportPm: false
+
+reportSignalTrace: false
+
+omc:
+  url: https://172.16.1.194:18443/acs
+
+cpe:
+  paraValuePath: E:\test\cpeSimulator\src\main\resources\config\fullParaValue.txt
+  bs5524ValuePath: E:\test\cpeSimulator\src\main\resources\config\Bs5524ParaValue.txt
+
+uploadFileDir: D:\BsSimulator\config
+
+download:
+  #软件下载的路径
+  path: D:\testDownLoadSoft\
+  #0表示不下载，1表示下载
+  execute: 0
+#  单位为秒，不下载时，延迟时间
+  time: 180
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
