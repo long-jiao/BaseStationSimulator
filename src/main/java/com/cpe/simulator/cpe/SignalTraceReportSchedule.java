@@ -45,10 +45,10 @@ public class SignalTraceReportSchedule {
     public void uploadSingalTraceReport() {
         if (!reportSignal) {
             log.info("reportSignalTrace value is: " + reportSignal);
+            return;
         }
         for (String itemSn : registerEnbSn) {
             kpiFileBuildPoolManagement.submit(new Runnable() {
-
                 @Override
                 public void run() {
                     String sourceFilePath = uploadFileDir + File.separator + "signalTrace.xst";
