@@ -41,10 +41,17 @@ public class InformConstants {
 
 
     public static final String SOFTWARECTRL_ACTIVATEENABLE = "Device.SoftwareCtrl.ActivateEnable";
+    public static final String SOFTWARECTRL_ROLLBACK_ENABLE = "RollbackEnable";
     public static final String SOFTWARECTRL_ACTIVATEENABLE_VALUE = "1";
 
+
+    public static final String SOFTWARECTRL_ACTIVATE_METHOD = "activate";
+    public static final String SOFTWARECTRL_ROLLBACK_METHOD = "rollback";
+
     public static final String SOFTWARECTRL_ACTIVATE_IN_PROGRESS = "activate_2";
+    public static final String SOFTWARECTRL_ROLLBACK_IN_PROGRESS = "rollback_2";
     public static final String SOFTWARECTRL_ACTIVATE_COMPLETE = "activate_100";
+    public static final String SOFTWARECTRL_ROOLBACK_COMPLETE = "rollback_100";
 
     public static final String SOFTWARE_BACKUP_VERSION = "Device.SoftwareCtrl.SystemCurrentVersion";
     public static final String SOFTWARE_CURRENT_VERSION = "Device.SoftwareCtrl.SystemBackupVersion";

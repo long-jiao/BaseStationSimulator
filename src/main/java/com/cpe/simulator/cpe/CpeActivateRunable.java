@@ -19,8 +19,11 @@ public class CpeActivateRunable implements Runnable{
 
     private String sn;
 
-    public CpeActivateRunable(String sn) {
+    private String rollBackOrActivate;
+
+    public CpeActivateRunable(String sn, String method) {
         this.sn = sn;
+        this.rollBackOrActivate = method;
     }
 
     @Override
@@ -37,19 +40,31 @@ public class CpeActivateRunable implements Runnable{
             List<ParameterValueStruct> arr = new ArrayList();
             ParameterValueStruct pvstruct = new ParameterValueStruct();
             pvstruct.setName("Device.DeviceInfo.MU.1.X_7C8334_SwUpgradeStage");
-            pvstruct.setValue(InformConstants.SOFTWARECTRL_ACTIVATE_IN_PROGRESS);
+            if (rollBackOrActivate.equals(InformConstants.SOFTWARECTRL_ACTIVATE_METHOD)) {
+                pvstruct.setValue(InformConstants.SOFTWARECTRL_ACTIVATE_IN_PROGRESS);
+                log.info("device:" + sn + ".." + "send value change.." + InformConstants.SOFTWARECTRL_ACTIVATE_IN_PROGRESS);
+            } else if(rollBackOrActivate.equals(InformConstants.SOFTWARECTRL_ROLLBACK_METHOD)){
+                pvstruct.setValue(InformConstants.SOFTWARECTRL_ROLLBACK_IN_PROGRESS);
+                log.info("device:" + sn + ".." + "send value change.." + InformConstants.SOFTWARECTRL_ROLLBACK_IN_PROGRESS);
+            }
             arr.add(pvstruct);
             Envelope informMessage = cpeActionsService.doInform(eventKeyList, sn, arr);
             CPEClientSession cpeClientSession = SpringUtil.getBean(CPEClientSession.class);
-            log.info("device:" + sn + ".." + "send value change.." + InformConstants.SOFTWARECTRL_ACTIVATE_IN_PROGRESS);
+
             cpeClientSession.sendInform(informMessage, sn);
 
             TimeUnit.SECONDS.sleep(20);
 
-            pvstruct.setValue(InformConstants.SOFTWARECTRL_ACTIVATE_COMPLETE);
+            if (rollBackOrActivate.equals(InformConstants.SOFTWARECTRL_ACTIVATE_METHOD)) {
+                pvstruct.setValue(InformConstants.SOFTWARECTRL_ACTIVATE_COMPLETE);
+                log.info("device:" + sn + ".." + "send value change.." + InformConstants.SOFTWARECTRL_ACTIVATE_COMPLETE);
+            } else if(rollBackOrActivate.equals(InformConstants.SOFTWARECTRL_ROLLBACK_METHOD)){
+                pvstruct.setValue(InformConstants.SOFTWARECTRL_ROOLBACK_COMPLETE);
+                log.info("device:" + sn + ".." + "send value change.." + InformConstants.SOFTWARECTRL_ROOLBACK_COMPLETE);
+            }
+
             informMessage = cpeActionsService.doInform(eventKeyList, sn, arr);
             cpeClientSession.sendInform(informMessage, sn);
-            log.info("device:" + sn + ".." + "send value change.." + InformConstants.SOFTWARECTRL_ACTIVATE_COMPLETE);
             AtomicBoolean sendFlag = ConcurrentManagement.HEART_BEAT_SEND_FLAG.getOrDefault(sn, new AtomicBoolean(true));
             sendFlag.set(false);
             ConcurrentManagement.HEART_BEAT_SEND_FLAG.put(sn, sendFlag);

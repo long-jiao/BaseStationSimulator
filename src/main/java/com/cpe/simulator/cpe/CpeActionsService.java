@@ -1,10 +1,8 @@
 package com.cpe.simulator.cpe;
 
-import com.cpe.simulator.bean.DeviceInfo;
 import com.cpe.simulator.mapper.DeviceInfoMapper;
 import com.cpe.simulator.util.CommonUtil;
 import com.cpe.simulator.util.InformConstants;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.dslforum.cwmp_1_0.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -206,7 +204,9 @@ public class CpeActionsService {
             String paraValue = Optional.ofNullable(pvs.getValue()).orElseGet(() -> "");
 
             if (paraName.equals(InformConstants.SOFTWARECTRL_ACTIVATEENABLE) && paraValue.equals(InformConstants.SOFTWARECTRL_ACTIVATEENABLE_VALUE)) {
-                processMsgPoolManagement.submit(new CpeActivateRunable(sn));
+                processMsgPoolManagement.submit(new CpeActivateRunable(sn, InformConstants.SOFTWARECTRL_ACTIVATE_METHOD));
+            } else if (paraName.contains(InformConstants.SOFTWARECTRL_ROLLBACK_ENABLE) && paraValue.equals(InformConstants.SOFTWARECTRL_ACTIVATEENABLE_VALUE)) {
+                processMsgPoolManagement.submit(new CpeActivateRunable(sn, InformConstants.SOFTWARECTRL_ROLLBACK_METHOD));
             }
 
             cpeDBReader.setValue(sn, paraName, paraValue);
