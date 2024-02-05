@@ -48,13 +48,14 @@ public class UdpClientService {
             inetAddress = initInetAddress();
         }
 
-        log.info("send udp message of rrdData");
         try (DatagramSocket socket = new DatagramSocket()) {
             for (String itemSn : registerEnbSn) {
                 String rrdSwitch = cpeDBReader.getValueOrDefault(itemSn, InformConstants.RRD_DATA_SWITCH, "0");
                 if (rrdSwitch.equals("0")) {
                     continue;
                 }
+
+                log.info(itemSn + ":send udp message of rrdData");
 
                 byte[] deviceSnBytes = itemSn.getBytes();
                 byte[] allBytes = new byte[deviceSnBytes.length + deviceDataBytes.length];

@@ -13,6 +13,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -63,10 +66,10 @@ public class CPEDownloadRunable implements Runnable {
 			String targetPath = downloadPath + fileName;
 			RequestCallback requestCallback = request -> request.getHeaders();
 			RestTemplate restTemplate = SpringUtil.getBean(RestTemplate.class);
-			log.info(sn + ":" + download.getURL());
 
 			try {
-				restTemplate.execute(download.getURL(), HttpMethod.GET, requestCallback, clientHttpResponse -> {
+				log.info(sn + ":" + URLDecoder.decode(download.getURL(), "UTF-8"));
+				restTemplate.execute(URLDecoder.decode(download.getURL(), "UTF-8"), HttpMethod.GET, requestCallback, clientHttpResponse -> {
 					Files.copy(clientHttpResponse.getBody(), Paths.get(targetPath));
 					return null;
 				});

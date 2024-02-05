@@ -76,7 +76,8 @@ public class CpeSimulatorApplication {
     public RestTemplate initRestTemplate() {
 //        return new RestTemplate(new HttpsClientRequestFactory(omcUrl));
 
-        return configRestemplate();
+        RestTemplate restTemplate = configRestemplate();
+        return restTemplate;
     }
 
     @Bean(name = "RegisterEnbInfoList")
@@ -193,12 +194,8 @@ public class CpeSimulatorApplication {
             httpComponentsClientHttpRequestFactory.setReadTimeout(90000);
             httpComponentsClientHttpRequestFactory.setConnectTimeout(60000);
             return new RestTemplate(httpComponentsClientHttpRequestFactory);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
 
         return new RestTemplate();
