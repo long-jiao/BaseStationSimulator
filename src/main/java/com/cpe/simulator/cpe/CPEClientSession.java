@@ -58,7 +58,11 @@ public class CPEClientSession {
         } catch (Exception e) {
             log.error(sn + " send inform get lock failed...", e);
         } finally {
-            reentrantLock.unlock();
+            try {
+                reentrantLock.unlock();
+            } catch (Exception e) {
+                log.error("unlock failed...", e);
+            }
         }
 
         log.info(sn + " sendInform process end....");
