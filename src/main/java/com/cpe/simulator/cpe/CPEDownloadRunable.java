@@ -128,7 +128,11 @@ public class CPEDownloadRunable implements Runnable {
 		} catch (Exception e) {
 			log.error(sn + " send download complete inform get lock failed...", e);
 		} finally {
-			reentrantLock.unlock();
+			try {
+				reentrantLock.unlock();
+			} catch (Exception e) {
+				log.error("unlock failed...", e);
+			}
 		}
 	}
 

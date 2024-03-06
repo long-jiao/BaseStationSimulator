@@ -101,7 +101,11 @@ public class PmFileServie {
             log.error(serialNumber + " send kpi file upload transfer message failed", e);
             return false;
         } finally {
-            reentrantLock.unlock();
+            try {
+                reentrantLock.unlock();
+            } catch (Exception e) {
+                log.error("unlock failed...", e);
+            }
         }
 
         return true;
