@@ -32,18 +32,24 @@ public class UploadFileService {
     private RestTemplate restTemplate;
 
     public int uploadFile(String uploadUrl, String filePath) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        org.springframework.core.io.Resource resource1 = null;
         try {
-            resource1 = new ByteArrayResource(Files.readAllBytes(Paths.get(filePath, new String[0])));
-        } catch (IOException e) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            org.springframework.core.io.Resource resource1 = null;
+            try {
+                resource1 = new ByteArrayResource(Files.readAllBytes(Paths.get(filePath, new String[0])));
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+            }
+            HttpEntity<byte[]> request = (HttpEntity<byte[]>) new HttpEntity(resource1, headers);
+
+            ResponseEntity<Object> response = restTemplate.exchange(uploadUrl, HttpMethod.PUT, request, Object.class);
+            return response.getStatusCode().value();
+        } catch (Exception e) {
+            log.error("UploadFileService url:" + uploadUrl);
             log.error(e.getMessage(), e);
         }
-        HttpEntity<byte[]> request = (HttpEntity<byte[]>) new HttpEntity(resource1, headers);
-
-        ResponseEntity<Object> response = restTemplate.exchange(uploadUrl, HttpMethod.PUT, request, Object.class);
-        return response.getStatusCode().value();
+        return HttpStatus.INTERNAL_SERVER_ERROR.value();
     }
 
     public void sendUploadInform(String commandKey, String sn, boolean uploadResult) {
