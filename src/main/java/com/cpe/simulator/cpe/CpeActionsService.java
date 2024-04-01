@@ -171,6 +171,11 @@ public class CpeActionsService {
                 }
             }
         }
+
+        if (nameList[0].equals("Device.")) {
+            processMsgPoolManagement.submit(new ValueChangeCellAvailableState(sn, 1));
+        }
+
         valresp.setParameterList(pvl);
         return inEnvelope(valresp);
     }

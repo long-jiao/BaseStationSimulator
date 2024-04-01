@@ -28,7 +28,7 @@ logging:
   level:
     root: info
   file:
-    name: '%d{HH:MM}.log'
+    name: ./tool.log
   pattern:
     file: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n'
   logback:
