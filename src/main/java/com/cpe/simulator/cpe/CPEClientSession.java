@@ -49,11 +49,12 @@ public class CPEClientSession {
 
             String informBody = JibxHelper.marshalObject(envelope, cwmpver);
             ACSResponse acsresp = sendData(informBody, new ArrayList<>());
-//            log.error("acsresp.getResponse():" + acsresp.getResponse());
+            log.error(sn + ":Response():" + acsresp.getResponse());
 //            Envelope downloadresponse sendclassobj = (Envelope) JibxHelper.unmarshalMessage(acsresp.getResponse(), cwmpver);
 //            InformResponse iresp = (InformResponse) classobj.getBody().getObjects().get(0);
 
             acsresp = sendData(null, acsresp.getCookies());
+            log.error(sn + ":SendNull,Response():" + acsresp.getResponse());
             handleACSRequest(acsresp, sn);
         } catch (Exception e) {
             log.error(sn + " send inform get lock failed...", e);

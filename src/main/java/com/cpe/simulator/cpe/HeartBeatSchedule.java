@@ -4,6 +4,7 @@ import com.cpe.simulator.message.ConcurrentManagement;
 import com.cpe.simulator.util.CommonUtil;
 import com.cpe.simulator.util.InformConstants;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.poi.hssf.record.DVALRecord;
 import org.dslforum.cwmp_1_0.Envelope;
 import org.dslforum.cwmp_1_0.EventStruct;
