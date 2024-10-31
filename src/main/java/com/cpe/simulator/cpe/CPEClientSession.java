@@ -66,7 +66,7 @@ public class CPEClientSession {
             }
         }
 
-        log.info(sn + " sendInform process end....");
+        log.info(sn + " sendInform process end...." + ((ID)envelope.getHeader().getObjects().get(0)).getString());
     }
 
     public ACSResponse sendDownLoadCompleteInform(Envelope envelope, String sn) {
