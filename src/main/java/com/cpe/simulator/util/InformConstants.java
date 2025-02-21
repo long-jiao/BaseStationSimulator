@@ -76,6 +76,9 @@ public class InformConstants {
     public static final String VENDOR_CONFIGURATION_FILE_DOWNLOAD = "3 Vendor Configuration File";
     public static final String FIRMWARE_UPGRADE_IMAGE_FILE = "1 Firmware Upgrade Image";
 
+    public static final String VENDOR_CERTIFICATE_FILE_UPGRADE = "16 CA Certificate file";
+    public static final String IPSEC_CERTIFICATE_FILE_UPGRADE = "X %s IPSec Cert";
+
     public static final String FILE_TYPE_WIFI_LOG_UPLOAD = "X %s WifiLog";
     public static final String FILE_TYPE_CHR_LOG_UPLOAD = "X %s CHRLog";
     public static final String FILE_TYPE_BLACKBOX_LOG_UPLOAD = "X %s BlackBox";

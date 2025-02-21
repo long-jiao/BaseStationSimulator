@@ -12,12 +12,17 @@ import org.dslforum.cwmp_1_0.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
+import sun.security.x509.X500Name;
 
+import java.io.FileInputStream;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.Principal;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,12 +58,14 @@ public class CPEDownloadRunable implements Runnable {
 		String fileType = download.getFileType();
 		log.error("fileType is:" +fileType);
 		boolean downLoadResult = true;
+		String fileName = null;
 		if (execute.equals(InformConstants.EXECUTE_DOWNLOAD)) {
-			String fileName = null;
 			if (InformConstants.FIRMWARE_UPGRADE_IMAGE_FILE.equals(fileType)) {
 				fileName = sn + "_" + randomVersionName + ".zip";
 			} else if (InformConstants.VENDOR_CONFIGURATION_FILE_DOWNLOAD.equals(fileType)){
 				fileName = sn + "_" + randomVersionName + ".xml";
+			} else if (InformConstants.VENDOR_CERTIFICATE_FILE_UPGRADE.equals(fileType)) {
+				fileName = sn + "_" + CommonUtil.reportSinglaTraceFileFormatter.format(LocalDateTime.now()) + ".crt";
 			} else {
 				fileName = "test" + randomVersionName + ".zip";
 			}
@@ -88,10 +95,15 @@ public class CPEDownloadRunable implements Runnable {
 
 		LocalDateTime endTime = LocalDateTime.now();
 		log.info(sn + " download success" + ", cost time(second):" + Duration.between(startTime, endTime).getSeconds());
-		if (CommonUtil.strHasLength(fileType) && fileType.contains(InformConstants.FIRMWARE_UPGRADE_IMAGE_FILE) && downLoadResult) {
-			updateCpeSystemBackUpVersion(download.getURL(), sn);
-			updateMuDownloadStatus();
+		if (downLoadResult) {
+			if (CommonUtil.strHasLength(fileType) && fileType.contains(InformConstants.FIRMWARE_UPGRADE_IMAGE_FILE)) {
+				updateCpeSystemBackUpVersion(download.getURL(), sn);
+				updateMuDownloadStatus();
+			} else if (InformConstants.VENDOR_CERTIFICATE_FILE_UPGRADE.equals(fileType) && downLoadResult) {
+				updateGnodebCertInfo(downloadPath + fileName, sn);
+			}
 		}
+
 
 		ArrayList<EventStruct> eventKeyList = new ArrayList<>();
 		EventStruct eventStruct = new EventStruct();
@@ -133,6 +145,37 @@ public class CPEDownloadRunable implements Runnable {
 			} catch (Exception e) {
 				log.error("unlock failed...", e);
 			}
+		}
+	}
+
+	private void updateGnodebCertInfo(String filePath, String sn) {
+		try {
+			FileInputStream fis = new FileInputStream(filePath);
+			CertificateFactory certificateFactory = CertificateFactory.getInstance("X509");
+			X509Certificate x509Certificate = (X509Certificate) certificateFactory.generateCertificate(fis);
+
+			CpeDBReader cpeDBReader = SpringUtil.getBean(CpeDBReader.class);
+			Principal subjectDN = x509Certificate.getSubjectDN();
+			if (subjectDN instanceof X500Name) {
+				X500Name subjectDnX500Name = (X500Name) subjectDN;
+				cpeDBReader.setValue(sn, "Device.Security.Certificate.1.Subject", subjectDnX500Name.getCommonName());
+			} else {
+				cpeDBReader.setValue(sn, "Device.Security.Certificate.1.Subject", subjectDN.getName());
+			}
+
+			Principal issuerDN = x509Certificate.getIssuerDN();
+			if (issuerDN instanceof X500Name) {
+				X500Name issuerDnX500Name = (X500Name) issuerDN;
+				cpeDBReader.setValue(sn, "Device.Security.Certificate.1.Issuer", issuerDnX500Name.getCommonName());
+			} else {
+				cpeDBReader.setValue(sn, "Device.Security.Certificate.1.Issuer", issuerDN.getName());
+			}
+
+			cpeDBReader.setValue(sn, "Device.Security.Certificate.1.NotBefore", CommonUtil.formatDate(x509Certificate.getNotBefore()));
+			cpeDBReader.setValue(sn, "Device.Security.Certificate.1.NotAfter", CommonUtil.formatDate(x509Certificate.getNotAfter()));
+
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
 		}
 	}
 

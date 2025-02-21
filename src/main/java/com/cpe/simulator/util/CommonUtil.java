@@ -2,9 +2,12 @@ package com.cpe.simulator.util;
 
 
 import java.io.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -25,6 +28,12 @@ public class CommonUtil {
 
     public static String formatTriggerEventTime(LocalDateTime dateTime) {
         return dateTime.format(alarmEventFormatter);
+    }
+
+    public static String formatDate(Date data) {
+        Instant instant = data.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        return formatTriggerEventTime(instant.atZone(zoneId).toLocalDateTime());
     }
 
     public static String getCwmpId() {
