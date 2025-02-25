@@ -84,6 +84,8 @@ public class InformConstants {
     public static final String FILE_TYPE_BLACKBOX_LOG_UPLOAD = "X %s BlackBox";
     public static final String FILE_TYPE_DEVICE_LOG_UPLOAD = "X %s DeviceLog";
 
+    public static final String FILE_TYPE_DEVICE_SVLOG_UPLOAD = "X %s SVLOG";
+
 
     public static final List<String> ALARM_IDENTIFIER_LIST = new ArrayList<>();
 

@@ -43,7 +43,10 @@ public class CpeUploadRunable implements Runnable {
         } else if (InformConstants.FILE_TYPE_WIFI_LOG_UPLOAD.equals(fileType) || InformConstants.FILE_TYPE_DEVICE_LOG_UPLOAD.equals(fileType) ||
                 InformConstants.FILE_TYPE_CHR_LOG_UPLOAD.equals(fileType) || InformConstants.FILE_TYPE_BLACKBOX_LOG_UPLOAD.equals(fileType)) {
             sourceFilePath = uploadFileDir + File.separator + "baseStation.log";
+        } else if (InformConstants.FILE_TYPE_DEVICE_SVLOG_UPLOAD.equals(fileType)) {
+            sourceFilePath = uploadFileDir + File.separator + "SV.log.gz";
         }
+
 
         String timeStamp = LocalDateTime.now().toString();
         if (InformConstants.FILE_TYPE_WIFI_LOG_UPLOAD.equals(fileType)) {
