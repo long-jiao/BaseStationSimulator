@@ -1,5 +1,6 @@
 package com.cpe.simulator.cpe;
 
+import com.cpe.simulator.bean.EventCodeProcessInfo;
 import com.cpe.simulator.mapper.DeviceInfoMapper;
 import com.cpe.simulator.util.CommonUtil;
 import com.cpe.simulator.util.InformConstants;
@@ -198,6 +199,7 @@ public class CpeActionsService {
 
     public Envelope doSetParameterValues(String sn, SetParameterValues setParameterValues, boolean learn) {
         ArrayList<ParameterValueStruct> nameList = setParameterValues.getParameterList().getParameterValueStruct();
+        Map<String, Object> cellAvailabelStateParaPathToValue = new HashMap<>();
         for (int i = 0; i < nameList.size(); i++) {
             ParameterValueStruct pvs = nameList.get(i);
             String paraName = pvs.getName();
@@ -207,10 +209,26 @@ public class CpeActionsService {
                 processMsgPoolManagement.submit(new CpeActivateRunable(sn, InformConstants.SOFTWARECTRL_ACTIVATE_METHOD));
             } else if (paraName.contains(InformConstants.SOFTWARECTRL_ROLLBACK_ENABLE) && paraValue.equals(InformConstants.SOFTWARECTRL_ACTIVATEENABLE_VALUE)) {
                 processMsgPoolManagement.submit(new CpeActivateRunable(sn, InformConstants.SOFTWARECTRL_ROLLBACK_METHOD));
+            } else if (paraName.contains(InformConstants.CELL_ACTIVE_STATE_PARA_PATH_SUFFIX)) {
+                if (paraValue.equals(InformConstants.CELL_ACTIVE_STATE_ACTIVE)) {
+                    cellAvailabelStateParaPathToValue.put(paraName.replace("CellActiveState", "CellAvailableState"), "0");
+                } else if (paraValue.equals(InformConstants.CELL_ACTIVE_STATE_DEACTIVE)) {
+                    cellAvailabelStateParaPathToValue.put(paraName.replace("CellActiveState", "CellAvailableState"), "1");
+                }
+
             }
 
             cpeDBReader.setValue(sn, paraName, paraValue);
         }
+
+        if (cellAvailabelStateParaPathToValue.size() > 0) {
+            EventCodeProcessInfo eventCodeProcessInfo = new EventCodeProcessInfo();
+            eventCodeProcessInfo.setSn(sn);
+            eventCodeProcessInfo.setEventCode(EventStructConstants.EVENT_VALUE_CHANGED);
+            eventCodeProcessInfo.setParameterPathToValue(cellAvailabelStateParaPathToValue);
+            processMsgPoolManagement.submit(new EventCodeProcessRunable(eventCodeProcessInfo));
+        }
+
         SetParameterValuesResponse valresp = new SetParameterValuesResponse();
         valresp.setStatus(SetParameterValuesResponse.Status._0);
         return inEnvelope(valresp);

@@ -39,6 +39,11 @@ public class InformConstants {
     public static final String MU_DOWNLOAD_STATUS_FINISH = "1";
     public static final String MU_DOWNLOAD_STATUS_CLEAR = "0";
 
+    public static final String CELL_ACTIVE_STATE_PARA_PATH_SUFFIX = ".CellConfig.NR.RAN.RF.CellActiveState";
+    public static final String CELL_ACTIVE_STATE_ACTIVE = "1";
+    public static final String CELL_ACTIVE_STATE_DEACTIVE = "0";
+
+
 
     public static final String SOFTWARECTRL_ACTIVATEENABLE = "Device.SoftwareCtrl.ActivateEnable";
     public static final String SOFTWARECTRL_ROLLBACK_ENABLE = "RollbackEnable";
