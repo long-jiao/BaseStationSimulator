@@ -261,9 +261,9 @@ public class CpeActionsService {
             mrDataTaskRunable.setEndTime(endTimeStr);
             LocalDateTime endTime = null;
             if (endTimeStr.contains("Z")) {
-                endTime = LocalDateTime.parse(startTimeStr, CommonUtil.formatterTandZ);
+                endTime = LocalDateTime.parse(endTimeStr, CommonUtil.formatterTandZ);
             } else {
-                endTime = LocalDateTime.parse(startTimeStr, CommonUtil.alarmEventFormatter);
+                endTime = LocalDateTime.parse(endTimeStr, CommonUtil.alarmEventFormatter);
             }
 
             long endBetween = ChronoUnit.MINUTES.between(now, endTime);
