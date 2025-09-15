@@ -16,8 +16,6 @@ import sun.security.x509.X500Name;
 
 import java.io.FileInputStream;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.Principal;
@@ -57,6 +55,11 @@ public class CPEDownloadRunable implements Runnable {
 		String randomVersionName = String.valueOf(new Random().nextInt());
 		String fileType = download.getFileType();
 		log.error("fileType is:" +fileType);
+
+		CpeDBReader cpeDBReader = SpringUtil.getBean(CpeDBReader.class);
+		String ouiValue = cpeDBReader.getValue(sn, InformConstants.MU_MANUFACTUREROUI);
+		fileType = fileType.replace(ouiValue, "%s");
+
 		boolean downLoadResult = true;
 		String fileName = null;
 		if (execute.equals(InformConstants.EXECUTE_DOWNLOAD)) {
@@ -66,6 +69,8 @@ public class CPEDownloadRunable implements Runnable {
 				fileName = sn + "_" + randomVersionName + ".xml";
 			} else if (InformConstants.VENDOR_CERTIFICATE_FILE_UPGRADE.equals(fileType)) {
 				fileName = sn + "_" + CommonUtil.reportSinglaTraceFileFormatter.format(LocalDateTime.now()) + ".crt";
+			} else if (InformConstants.RRU_VERSION_UPGRADE_IMAGE_FILE.equals(fileType)) {
+				fileName = sn + "_rru_" + randomVersionName + ".zip";
 			} else {
 				fileName = "test" + randomVersionName + ".zip";
 			}
@@ -101,6 +106,9 @@ public class CPEDownloadRunable implements Runnable {
 				updateMuDownloadStatus();
 			} else if (InformConstants.VENDOR_CERTIFICATE_FILE_UPGRADE.equals(fileType) && downLoadResult) {
 				updateGnodebCertInfo(downloadPath + fileName, sn);
+			} else if (InformConstants.RRU_VERSION_UPGRADE_IMAGE_FILE.equals(fileType)) {
+				updateRruUpgradeStatusForMu();
+				updateSystemCtrlParamForRruVersion(download.getURL());
 			}
 		}
 
@@ -190,5 +198,17 @@ public class CPEDownloadRunable implements Runnable {
 	private void updateMuDownloadStatus() {
 		CpeDBReader cpeDBReader = SpringUtil.getBean(CpeDBReader.class);
 		cpeDBReader.setValue(sn, InformConstants.MU_DOWNLOAD_STATUS, InformConstants.MU_DOWNLOAD_STATUS_FINISH);
+	}
+
+	private void updateRruUpgradeStatusForMu() {
+		CpeDBReader cpeDBReader = SpringUtil.getBean(CpeDBReader.class);
+		cpeDBReader.setValue(sn, InformConstants.MU_RRU_UPGRADE_STATUS, "1");
+	}
+	private void updateSystemCtrlParamForRruVersion(String url) {
+		String versionPackageName = url.substring(url.lastIndexOf("/") + 1);
+		String versionName = versionPackageName.replace(".zip", "");
+
+		CpeDBReader cpeDBReader = SpringUtil.getBean(CpeDBReader.class);
+		cpeDBReader.setValue(sn, "Device.SoftwareCtrl.X_7C8334_RuCurrentVersion", versionName);
 	}
 }

@@ -36,12 +36,21 @@ public class InformConstants {
     public static final String MU_ACTIVATE_STATUS_ACTIVATING = "5";
 
     public static final String MU_DOWNLOAD_STATUS = "Device.DeviceInfo.MU.1.X_7C8334_DownloadStatus";
+    public static final String MU_RRU_UPGRADE_STATUS = "Device.DeviceInfo.MU.1.X_7C8334_RruSwUpgradeStage";
     public static final String MU_DOWNLOAD_STATUS_FINISH = "1";
     public static final String MU_DOWNLOAD_STATUS_CLEAR = "0";
 
     public static final String CELL_ACTIVE_STATE_PARA_PATH_SUFFIX = ".CellConfig.NR.RAN.RF.CellActiveState";
     public static final String CELL_ACTIVE_STATE_ACTIVE = "1";
     public static final String CELL_ACTIVE_STATE_DEACTIVE = "0";
+
+    public static final String MRMGMT_ENABLE_PATH = "Device.FAP.MRMgmt.Config.1.MrEnable";
+    public static final String MRMGMT_ENABLE_OPEN_VALUE = "1";
+    public static final String MRMGMT_UPLOAD_PERIOD_PATH = "Device.FAP.MRMgmt.Config.1.UploadPeriod";
+
+    public static final String MRMGMT_SAMPLE_BEGIN_TIME_PATH = "Device.FAP.MRMgmt.Config.1.SampleBeginTime";
+    public static final String MRMGMT_SAMPLE_END_TIME_PATH = "Device.FAP.MRMgmt.Config.1.SampleEndTime";
+    public static final String MRMGMT_UPLOAD_URL_PATH = "Device.FAP.MRMgmt.Config.1.MrUrl";
 
 
 
@@ -77,9 +86,12 @@ public class InformConstants {
 
     public static final String AUTO_NOMOUS_TRANSFERCOMPLETE_FILE_TYPE = "X 7C8334 PerformaceReport";
 
+    public static final String MR_FILE_TYPE = "105 MR File";
+
     public static final String VENDOR_CONFIGURATION_FILE_UPLOAD = "1 Vendor Configuration File";
     public static final String VENDOR_CONFIGURATION_FILE_DOWNLOAD = "3 Vendor Configuration File";
     public static final String FIRMWARE_UPGRADE_IMAGE_FILE = "1 Firmware Upgrade Image";
+    public static final String RRU_VERSION_UPGRADE_IMAGE_FILE = "X %s Rru Firmware Upgrade Image";
 
     public static final String VENDOR_CERTIFICATE_FILE_UPGRADE = "16 CA Certificate file";
     public static final String IPSEC_CERTIFICATE_FILE_UPGRADE = "X %s IPSec Cert";

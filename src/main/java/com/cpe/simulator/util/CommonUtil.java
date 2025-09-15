@@ -15,10 +15,13 @@ import java.util.UUID;
 public class CommonUtil {
 
     public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    public static DateTimeFormatter formatterTandZ = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     public static DateTimeFormatter alarmEventFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static DateTimeFormatter reportSinglaTraceFileFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+
+    public static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
 
     public static String getCurrentTime() {

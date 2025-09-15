@@ -8,11 +8,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.dslforum.cwmp_1_0.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.*;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +50,9 @@ public class CpeActionsService {
 
     @Resource
     private ThreadPoolTaskExecutor uploadFilePoolManagement;
+
+    @Resource
+    private ThreadPoolTaskScheduler mrDataPoolManagement;
 
     @Value("${uploadFileDir:./config}")
     private String uploadFileDir;
@@ -200,6 +208,7 @@ public class CpeActionsService {
     public Envelope doSetParameterValues(String sn, SetParameterValues setParameterValues, boolean learn) {
         ArrayList<ParameterValueStruct> nameList = setParameterValues.getParameterList().getParameterValueStruct();
         Map<String, Object> cellAvailabelStateParaPathToValue = new HashMap<>();
+        boolean openMrTask = false;
         for (int i = 0; i < nameList.size(); i++) {
             ParameterValueStruct pvs = nameList.get(i);
             String paraName = pvs.getName();
@@ -215,7 +224,10 @@ public class CpeActionsService {
                 } else if (paraValue.equals(InformConstants.CELL_ACTIVE_STATE_DEACTIVE)) {
                     cellAvailabelStateParaPathToValue.put(paraName.replace("CellActiveState", "CellAvailableState"), "1");
                 }
-
+            } else if (paraName.contains(InformConstants.MRMGMT_ENABLE_PATH)) {
+                if (paraValue.equals(InformConstants.MRMGMT_ENABLE_OPEN_VALUE)) {
+                    openMrTask = true;
+                }
             }
 
             cpeDBReader.setValue(sn, paraName, paraValue);
@@ -227,6 +239,45 @@ public class CpeActionsService {
             eventCodeProcessInfo.setEventCode(EventStructConstants.EVENT_VALUE_CHANGED);
             eventCodeProcessInfo.setParameterPathToValue(cellAvailabelStateParaPathToValue);
             processMsgPoolManagement.submit(new EventCodeProcessRunable(eventCodeProcessInfo));
+        }
+        if (openMrTask) {
+            MrDataTaskRunable mrDataTaskRunable = new MrDataTaskRunable();
+            mrDataTaskRunable.setSerialNumber(sn);
+            String startTimeStr = cpeDBReader.getValue(sn, InformConstants.MRMGMT_SAMPLE_BEGIN_TIME_PATH);
+            LocalDateTime startTime = null;
+            if (startTimeStr.contains("Z")) {
+                startTime = LocalDateTime.parse(startTimeStr, CommonUtil.formatterTandZ);
+            } else {
+                startTime = LocalDateTime.parse(startTimeStr, CommonUtil.alarmEventFormatter);
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            String uploadPeriod = cpeDBReader.getValue(sn, InformConstants.MRMGMT_UPLOAD_PERIOD_PATH);
+            long between = ChronoUnit.MINUTES.between(now, startTime);
+            long delayMinutes = between > 0 ? between : Long.valueOf(uploadPeriod);
+            mrDataTaskRunable.setBeginTime(startTimeStr);
+
+            String endTimeStr = cpeDBReader.getValue(sn, InformConstants.MRMGMT_SAMPLE_END_TIME_PATH);
+            mrDataTaskRunable.setEndTime(endTimeStr);
+            LocalDateTime endTime = null;
+            if (endTimeStr.contains("Z")) {
+                endTime = LocalDateTime.parse(startTimeStr, CommonUtil.formatterTandZ);
+            } else {
+                endTime = LocalDateTime.parse(startTimeStr, CommonUtil.alarmEventFormatter);
+            }
+
+            long endBetween = ChronoUnit.MINUTES.between(now, endTime);
+            long endDelayMinutes = endBetween > 0 ? endBetween : Long.valueOf(uploadPeriod);
+
+            String uploadUrl = cpeDBReader.getValue(sn, InformConstants.MRMGMT_UPLOAD_URL_PATH);
+            mrDataTaskRunable.setUploadUrl(uploadUrl);
+            mrDataTaskRunable.setUploadFileDir(uploadFileDir);
+
+            ScheduledFuture<?> future = mrDataPoolManagement.getScheduledExecutor().scheduleAtFixedRate(mrDataTaskRunable, delayMinutes, Integer.valueOf(uploadPeriod), TimeUnit.MINUTES);
+
+            CancelTaskRunable cancelTaskRunable = new CancelTaskRunable();
+            cancelTaskRunable.setFuture(future);
+            mrDataPoolManagement.getScheduledExecutor().schedule(cancelTaskRunable, endDelayMinutes, TimeUnit.MINUTES);
         }
 
         SetParameterValuesResponse valresp = new SetParameterValuesResponse();
