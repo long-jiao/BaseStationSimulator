@@ -58,7 +58,7 @@ public class MrDataTaskRunable implements Runnable {
 
         String targetFileName = getMrFileName();
         long length = file.length();
-        String url = uploadUrl + "/" + targetFileName;
+        String url = uploadUrl + targetFileName;
         log.info("uploadUrl:" + url);
 
         RestTemplate restTemplate = SpringUtil.getBean(RestTemplate.class);
