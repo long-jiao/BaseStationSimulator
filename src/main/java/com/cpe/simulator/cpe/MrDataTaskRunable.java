@@ -62,7 +62,7 @@ public class MrDataTaskRunable implements Runnable {
         log.info("uploadUrl:" + url);
 
         RestTemplate restTemplate = SpringUtil.getBean(RestTemplate.class);
-        ResponseEntity<Object> response = restTemplate.exchange(uploadUrl, HttpMethod.PUT, request, Object.class);
+        ResponseEntity<Object> response = restTemplate.exchange(url, HttpMethod.PUT, request, Object.class);
         log.info("upload Mr file result:" + response.getStatusCode().value());
         sendUploadSuccessMsg(length, targetFileName, url);
     }
