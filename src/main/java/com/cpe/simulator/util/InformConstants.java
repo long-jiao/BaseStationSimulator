@@ -27,6 +27,7 @@ public class InformConstants {
     public static final String MU_MANUFACTURER = "Device.DeviceInfo.MU.1.Manufacturer";
     public static final String MU_MANUFACTUREROUI = "Device.DeviceInfo.MU.1.ManufacturerOUI";
     public static final String MU_PRODUCTCLASS = "Device.DeviceInfo.MU.1.ProductClass";
+    public static final String MU_MODELNAME = "Device.DeviceInfo.MU.1.ModelName";
 
 
     //4：等待激活 5：激活中

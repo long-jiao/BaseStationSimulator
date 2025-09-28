@@ -89,7 +89,7 @@ public class MrDataTaskRunable implements Runnable {
             autonomousTransferComplete.setAnnounceURL("");
             autonomousTransferComplete.setTransferURL(url);
             autonomousTransferComplete.setIsDownload("1");
-            autonomousTransferComplete.setFileType(InformConstants.AUTO_NOMOUS_TRANSFERCOMPLETE_FILE_TYPE);
+            autonomousTransferComplete.setFileType(InformConstants.MR_FILE_TYPE);
             autonomousTransferComplete.setFileSize(String.valueOf(fileSize));
             autonomousTransferComplete.setTargetFileName(fileName);
             FaultStruct faultStruct = new FaultStruct();
@@ -118,7 +118,9 @@ public class MrDataTaskRunable implements Runnable {
         CpeDBReader cpeDBReader = SpringUtil.getBean(CpeDBReader.class);
         String ouiValue = cpeDBReader.getValue(serialNumber, InformConstants.MU_MANUFACTUREROUI);
         StringBuilder nameBuilder = new StringBuilder("NR_MRO_");
-        nameBuilder.append(ouiValue).append("_").append(serialNumber).append("_");
+        nameBuilder.append(ouiValue).append("_OMC_");
+        nameBuilder.append(cpeDBReader.getValue(serialNumber, InformConstants.MU_MODELNAME)).append("_");
+        nameBuilder.append(cpeDBReader.getValue(serialNumber, InformConstants.GNBID_PATH)).append("_");
         LocalDateTime now = LocalDateTime.now();
         String formatTime = now.format(CommonUtil.dateTimeFormatter);
         nameBuilder.append(formatTime).append(".csv.gz");
