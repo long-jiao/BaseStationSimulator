@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -121,7 +122,7 @@ public class MrDataTaskRunable implements Runnable {
         nameBuilder.append(ouiValue).append("_OMC_");
         nameBuilder.append(cpeDBReader.getValue(serialNumber, InformConstants.MU_MODELNAME)).append("_");
         nameBuilder.append(cpeDBReader.getValue(serialNumber, InformConstants.GNBID_PATH)).append("_");
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
         String formatTime = now.format(CommonUtil.dateTimeFormatter);
         nameBuilder.append(formatTime).append(".csv.gz");
         return nameBuilder.toString();
