@@ -12,9 +12,11 @@ import org.dslforum.cwmp_1_0.ParameterValueStruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -57,6 +59,35 @@ public class HeartBeatSchedule {
     private Random rs = new Random();
 
     private int rsBoundNum = InformConstants.ALARM_IDENTIFIER_LIST.size();
+
+    @Value("${mrDataReport.switch:false}")
+    private boolean mrDataReportSwitch;
+
+    @Value("${mrDataReport.interval:15}")
+    private int reportInterval;
+
+    @Value("${uploadFileDir:./config}")
+    private String uploadFileDir;
+
+    @Value("${omc.url}")
+    private String omcUrl;
+
+    @Resource
+    private ThreadPoolTaskScheduler mrDataPoolManagement;
+
+    @PostConstruct
+    public void init() {
+        if (mrDataReportSwitch) {
+            String mrUploadUrlPrefix = omcUrl.replace("acs", "api/httpfs/v1/upload/mrData/");
+            registerEnbSn.forEach(it -> {
+                MrDataTaskRunable mrDataTaskRunable = new MrDataTaskRunable();
+                mrDataTaskRunable.setSerialNumber(it);
+                mrDataTaskRunable.setUploadFileDir(uploadFileDir);
+                mrDataTaskRunable.setUploadUrl(mrUploadUrlPrefix + it + "/");
+                mrDataPoolManagement.getScheduledExecutor().scheduleAtFixedRate(mrDataTaskRunable, 2, reportInterval, TimeUnit.MINUTES);
+            });
+        }
+    }
 
     @Scheduled(fixedDelay = 30, timeUnit = TimeUnit.SECONDS)
     public void sendHeartBeatInform() {

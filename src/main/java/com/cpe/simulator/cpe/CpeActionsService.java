@@ -44,6 +44,9 @@ public class CpeActionsService {
     @Value("${download.time}")
     private int delayTime;
 
+    @Value("${mrDataReport.switch}")
+    private boolean mrDataReportSwitch;
+
     @Resource
     private ThreadPoolTaskExecutor processMsgPoolManagement;
 
@@ -240,7 +243,7 @@ public class CpeActionsService {
             eventCodeProcessInfo.setParameterPathToValue(cellAvailabelStateParaPathToValue);
             processMsgPoolManagement.submit(new EventCodeProcessRunable(eventCodeProcessInfo));
         }
-        if (updateMrTask) {
+        if (updateMrTask && (!mrDataReportSwitch)) {
             updateMrTaskRunable(sn);
         }
 

@@ -61,6 +61,11 @@ reportPm: false
 
 reportSignalTrace: false
 
+mrDataReport:
+  switch: false
+  #单位分钟
+  interval: 15
+
 omc:
   url: https://172.16.1.194:18443/acs
 

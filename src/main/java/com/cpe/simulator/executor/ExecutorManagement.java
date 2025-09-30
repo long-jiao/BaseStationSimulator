@@ -87,7 +87,9 @@ public class ExecutorManagement {
     public ThreadPoolTaskScheduler initMrDataPool() {
         ThreadPoolTaskScheduler executor = new ThreadPoolTaskScheduler();
         executor.setThreadNamePrefix("mrData-thread");
-        executor.setPoolSize(50);
+        int calcResult = registerEnbSn.size() / 5 + 1;
+        int coreNumber = calcResult > 50 ? calcResult : 50;
+        executor.setPoolSize(coreNumber);
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.initialize();
 
