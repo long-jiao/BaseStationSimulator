@@ -44,28 +44,32 @@ public class MrDataTaskRunable implements Runnable {
 
     @Override
     public void run() {
-        String sourceFilePath = uploadFileDir + File.separator + "mrDatafile.gz";
-
-        File file = new File(sourceFilePath);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        org.springframework.core.io.Resource resource1 = null;
         try {
-            resource1 = new ByteArrayResource(Files.readAllBytes(Paths.get(sourceFilePath, new String[0])));
-        } catch (IOException e) {
+            String sourceFilePath = uploadFileDir + File.separator + "mrDatafile.gz";
+
+            File file = new File(sourceFilePath);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            org.springframework.core.io.Resource resource1 = null;
+            try {
+                resource1 = new ByteArrayResource(Files.readAllBytes(Paths.get(sourceFilePath, new String[0])));
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+            }
+            HttpEntity<byte[]> request = (HttpEntity<byte[]>) new HttpEntity(resource1, headers);
+
+            String targetFileName = getMrFileName();
+            long length = file.length();
+            String url = uploadUrl + targetFileName;
+            log.info("uploadUrl:" + url);
+
+            RestTemplate restTemplate = SpringUtil.getBean(RestTemplate.class);
+            ResponseEntity<Object> response = restTemplate.exchange(url, HttpMethod.PUT, request, Object.class);
+            log.info("upload Mr file result:" + response.getStatusCode().value());
+            sendUploadSuccessMsg(length, targetFileName, url);
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        HttpEntity<byte[]> request = (HttpEntity<byte[]>) new HttpEntity(resource1, headers);
-
-        String targetFileName = getMrFileName();
-        long length = file.length();
-        String url = uploadUrl + targetFileName;
-        log.info("uploadUrl:" + url);
-
-        RestTemplate restTemplate = SpringUtil.getBean(RestTemplate.class);
-        ResponseEntity<Object> response = restTemplate.exchange(url, HttpMethod.PUT, request, Object.class);
-        log.info("upload Mr file result:" + response.getStatusCode().value());
-        sendUploadSuccessMsg(length, targetFileName, url);
     }
 
     public boolean sendUploadSuccessMsg(long fileSize, String fileName, String url) {
