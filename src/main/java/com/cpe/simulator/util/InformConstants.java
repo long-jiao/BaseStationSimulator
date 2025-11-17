@@ -88,6 +88,7 @@ public class InformConstants {
     public static final String AUTO_NOMOUS_TRANSFERCOMPLETE_FILE_TYPE = "X 7C8334 PerformaceReport";
 
     public static final String MR_FILE_TYPE = "105 MR File";
+    public static final String SON_LOG_FILE_TYPE = "X 7C8334 SONLog";
 
     public static final String VENDOR_CONFIGURATION_FILE_UPLOAD = "1 Vendor Configuration File";
     public static final String VENDOR_CONFIGURATION_FILE_DOWNLOAD = "3 Vendor Configuration File";

@@ -46,6 +46,9 @@ public class HeartBeatSchedule {
     @Value("${reportAlarm:false}")
     private boolean reportAlarm;
 
+    @Value("${reportSonLog:false}")
+    private boolean reportSonLog;
+
     private int hearBeatNum = 0;
 
     private AtomicBoolean firstInform = new AtomicBoolean(true);
@@ -86,6 +89,11 @@ public class HeartBeatSchedule {
                 mrDataTaskRunable.setUploadUrl(mrUploadUrlPrefix + it + "/");
                 mrDataPoolManagement.getScheduledExecutor().scheduleAtFixedRate(mrDataTaskRunable, 2, reportInterval, TimeUnit.MINUTES);
             });
+        }
+        if (reportSonLog) {
+            SonLogTaskRunable sonLogTaskRunable = new SonLogTaskRunable();
+            sonLogTaskRunable.setUploadFileDir(uploadFileDir);
+            mrDataPoolManagement.getScheduledExecutor().scheduleAtFixedRate(sonLogTaskRunable, 2, 5, TimeUnit.MINUTES);
         }
     }
 

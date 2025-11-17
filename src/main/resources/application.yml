@@ -57,6 +57,8 @@ kpi:
 
 reportAlarm: false
 
+reportSonLog: true
+
 reportPm: false
 
 reportSignalTrace: false
