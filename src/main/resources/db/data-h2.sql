@@ -1,10 +1,13 @@
-DROP table if exists `DeviceInfo`;
-create table DeviceInfo
+DROP table if exists `PERIODIC_Parameter`;
+create table PERIODIC_Parameter
 (
     `id`           integer NOT NULL primary key auto_increment,
-    `manufacturer` VARCHAR(20),
-    `oui`          VARCHAR(10),
-    `productClass` VARCHAR(10)
+    `paraPath` VARCHAR(100)
 );
 
-INSERT INTO DeviceInfo (id, manufacturer, oui, productClass) values (1, 'CHANGKUN', '7C8334', 'L5W6-BS');
+INSERT INTO PERIODIC_Parameter (paraPath) values ('Device.RootDataModelVersion');
+INSERT INTO PERIODIC_Parameter (paraPath) values ('Device.DeviceInfo.MU.1.HardwareVersion');
+INSERT INTO PERIODIC_Parameter (paraPath) values ('Device.DeviceInfo.MU.1.SoftwareVersion');
+INSERT INTO PERIODIC_Parameter (paraPath) values ('Device.DeviceInfo.MU.1.ProvisioningCode');
+INSERT INTO PERIODIC_Parameter (paraPath) values ('Device.ManagementServer.ParameterKey');
+INSERT INTO PERIODIC_Parameter (paraPath) values ('Device.ManagementServer.ConnectionRequestURL');

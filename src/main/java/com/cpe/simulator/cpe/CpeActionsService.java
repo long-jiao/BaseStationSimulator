@@ -6,6 +6,7 @@ import com.cpe.simulator.util.InformConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.dslforum.cwmp_1_0.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +49,9 @@ public class CpeActionsService {
     @Value("${uploadFileDir:./config}")
     private String uploadFileDir;
 
+    @Resource
+    private JdbcTemplate jdbcTemplate;
+
     public static void main(String[] args) {
 //        System.out.println("Starting CpeConfDB");
 //
@@ -85,12 +89,19 @@ public class CpeActionsService {
         // use a mixed list of fixed and custom keys
         ArrayList<String> pList = new ArrayList<>();
 
-        pList.add(InformConstants.ROOT_DATAMODEL_VERSION);
-        pList.add(InformConstants.MU_HARDWARE_VERSION);
-        pList.add(InformConstants.MU_SOFTWARE_VERSION);
-        pList.add(InformConstants.PROVISIONING_CODE);
-        pList.add(InformConstants.PARAMETER_KEY);
-        pList.add(InformConstants.CONNECTION_REQUEST_URL);
+        List<Map<String, Object>> paraPathList = jdbcTemplate.queryForList("select paraPath from PERIODIC_Parameter");
+        log.error("paraPathList size ....." + paraPathList.size());
+        for (Map<String, Object> itemData : paraPathList) {
+            pList.add(itemData.get("paraPath").toString());
+            log.error("paraPath ....." + itemData.get("paraPath").toString());
+        }
+
+//        pList.add(InformConstants.ROOT_DATAMODEL_VERSION);
+//        pList.add(InformConstants.MU_HARDWARE_VERSION);
+//        pList.add(InformConstants.MU_SOFTWARE_VERSION);
+//        pList.add(InformConstants.PROVISIONING_CODE);
+//        pList.add(InformConstants.PARAMETER_KEY);
+//        pList.add(InformConstants.CONNECTION_REQUEST_URL);
 
         ArrayList<ParameterValueStruct> arr = new ArrayList();
         for (String p : pList) {

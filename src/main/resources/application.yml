@@ -9,18 +9,17 @@ http:
   port: 32009
 
 
-
-
 spring:
   application:
     name: cpe-service
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:cpeData
+    url: jdbc:h2:mem:cpeData;DATABASE_TO_UPPER=false
     username: root
     password: hms@2020
   sql:
     init:
+      mode: always
 #      schema-locations: classpath:db/initSql.sql
       data-locations: classpath:db/data-h2.sql
 
@@ -65,8 +64,8 @@ omc:
   url: https://172.16.1.194:18443/acs
 
 cpe:
-  paraValuePath: E:\test\cpeSimulator\src\main\resources\config\fullParaValue.txt
-  bs5524ValuePath: E:\test\cpeSimulator\src\main\resources\config\Bs5524ParaValue.txt
+  paraValuePath: D:\BsSimulator\config\fullParaValue.txt
+  bs5524ValuePath: D:\BsSimulator\config\Bs5524ParaValue.txt
 
 uploadFileDir: D:\BsSimulator\config
 
