@@ -3,6 +3,7 @@ package com.cpe.simulator.executor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -79,6 +80,19 @@ public class ExecutorManagement {
         executor.setQueueCapacity(5000);
         executor.setKeepAliveSeconds(5 * 60);
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        return executor;
+    }
+
+    @Bean(name = "mrDataPoolManagement")
+    public ThreadPoolTaskScheduler initMrDataPool() {
+        ThreadPoolTaskScheduler executor = new ThreadPoolTaskScheduler();
+        executor.setThreadNamePrefix("mrData-thread");
+        int calcResult = registerEnbSn.size() / 5 + 1;
+        int coreNumber = calcResult > 50 ? calcResult : 50;
+        executor.setPoolSize(coreNumber);
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.initialize();
+
         return executor;
     }
 

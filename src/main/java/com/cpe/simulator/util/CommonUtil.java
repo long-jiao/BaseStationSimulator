@@ -2,9 +2,12 @@ package com.cpe.simulator.util;
 
 
 import java.io.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -12,10 +15,13 @@ import java.util.UUID;
 public class CommonUtil {
 
     public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    public static DateTimeFormatter formatterTandZ = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     public static DateTimeFormatter alarmEventFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static DateTimeFormatter reportSinglaTraceFileFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+
+    public static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
 
     public static String getCurrentTime() {
@@ -25,6 +31,12 @@ public class CommonUtil {
 
     public static String formatTriggerEventTime(LocalDateTime dateTime) {
         return dateTime.format(alarmEventFormatter);
+    }
+
+    public static String formatDate(Date data) {
+        Instant instant = data.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        return formatTriggerEventTime(instant.atZone(zoneId).toLocalDateTime());
     }
 
     public static String getCwmpId() {

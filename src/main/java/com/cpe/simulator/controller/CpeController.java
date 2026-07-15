@@ -24,4 +24,9 @@ public class CpeController {
         processMsgPoolManagement.submit(new ConnectionRequestRunable(sn));
         return sn;
     }
+
+    @GetMapping("/version")
+    public String getVersion() {
+        return "V1.5";
+    }
 }
