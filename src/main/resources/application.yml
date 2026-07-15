@@ -60,6 +60,11 @@ reportPm: false
 
 reportSignalTrace: false
 
+reportNiData:
+  enable: false
+  # 单位为毫秒900000,1800000,3600000
+  reportInterval: 900000
+
 omc:
   url: https://172.16.1.194:18443/acs
 

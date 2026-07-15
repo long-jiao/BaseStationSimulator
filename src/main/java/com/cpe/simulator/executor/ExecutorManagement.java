@@ -76,7 +76,7 @@ public class ExecutorManagement {
         int coreNumber = registerEnbSn.size() / 2 + 1;
         executor.setCorePoolSize(coreNumber);
         executor.setMaxPoolSize(coreNumber);
-        executor.setQueueCapacity(1021);
+        executor.setQueueCapacity(5000);
         executor.setKeepAliveSeconds(5 * 60);
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         return executor;

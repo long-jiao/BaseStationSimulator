@@ -59,6 +59,8 @@ public class InformConstants {
 
     public static final String EXECUTE_DOWNLOAD = "1";
     public static final String NOT_EXECUTE_DOWNLOAD = "0";
+    public static final String NI_TOOL_ENABLE_PATH = "Device.X_{OUI}_Tool.NITool.1.Enable";
+    public static final String NI_TOOL_PERIOD_UPLOAD_PATH = "Device.X_{OUI}_Tool.NITool.1.PeriodicUploadInterval";
 
     public static final String GNBID_PATH = "Device.X_7C8334_gNodeBFunction.1.gNodeBCommon.gNBId";
     public static final String CELLID_PATH_SUFFIX = ".CellConfig.NR.RAN.RF.CellId";

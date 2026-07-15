@@ -93,7 +93,6 @@ public class CpeActionsService {
         log.error("paraPathList size ....." + paraPathList.size());
         for (Map<String, Object> itemData : paraPathList) {
             pList.add(itemData.get("paraPath").toString());
-            log.error("paraPath ....." + itemData.get("paraPath").toString());
         }
 
 //        pList.add(InformConstants.ROOT_DATAMODEL_VERSION);
