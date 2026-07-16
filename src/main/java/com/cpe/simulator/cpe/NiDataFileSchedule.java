@@ -136,7 +136,7 @@ public class NiDataFileSchedule {
                 HttpEntity<byte[]> request = (HttpEntity<byte[]>) new HttpEntity(resource1, headers);
 
                 String fileName = "gNB_Ni_Measure_" + CommonUtil.formatFileDataTime(LocalDateTime.now()) + "+0800_" + itemSn + ".tar.gz";
-                String uploadUrl = omcUrl.replace("acs", "api/httpfs/v1/upload/traceData/") + itemSn + "/" + fileName;
+                String uploadUrl = omcUrl.replace("acs", "api/httpfs/v1/upload/niData/") + itemSn + "/" + fileName;
                 log.info("uploadUrl:" + uploadUrl);
                 ResponseEntity<Object> response = restTemplate.exchange(uploadUrl, HttpMethod.PUT, request, Object.class);
 
@@ -170,7 +170,7 @@ public class NiDataFileSchedule {
             autonomousTransferComplete.setAnnounceURL("");
             autonomousTransferComplete.setTransferURL(url);
             autonomousTransferComplete.setIsDownload("1");
-            autonomousTransferComplete.setFileType(InformConstants.AUTO_NOMOUS_TRANSFERCOMPLETE_FILE_TYPE);
+            autonomousTransferComplete.setFileType(InformConstants.NI_DATA_FILE_TYPE);
             autonomousTransferComplete.setFileSize(String.valueOf(file.length()));
             autonomousTransferComplete.setTargetFileName(file.getName());
             FaultStruct faultStruct = new FaultStruct();
