@@ -21,4 +21,6 @@ public class ConcurrentManagement {
 
     public static Map<String, Future> SN_MR_TASK_FUTURE = Maps.newConcurrentMap();
 
+    public static Map<String, Future> SN_NI_DATA_TASK_FUTURE = Maps.newConcurrentMap();
+
 }

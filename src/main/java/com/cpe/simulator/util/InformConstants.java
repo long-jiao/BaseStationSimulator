@@ -53,8 +53,6 @@ public class InformConstants {
     public static final String MRMGMT_SAMPLE_END_TIME_PATH = "Device.FAP.MRMgmt.Config.1.SampleEndTime";
     public static final String MRMGMT_UPLOAD_URL_PATH = "Device.FAP.MRMgmt.Config.1.MrUrl";
 
-
-
     public static final String SOFTWARECTRL_ACTIVATEENABLE = "Device.SoftwareCtrl.ActivateEnable";
     public static final String SOFTWARECTRL_ROLLBACK_ENABLE = "RollbackEnable";
     public static final String SOFTWARECTRL_ACTIVATEENABLE_VALUE = "1";
@@ -74,8 +72,12 @@ public class InformConstants {
 
     public static final String EXECUTE_DOWNLOAD = "1";
     public static final String NOT_EXECUTE_DOWNLOAD = "0";
+
     public static final String NI_TOOL_ENABLE_PATH = "Device.X_{OUI}_Tool.NITool.1.Enable";
     public static final String NI_TOOL_PERIOD_UPLOAD_PATH = "Device.X_{OUI}_Tool.NITool.1.PeriodicUploadInterval";
+    public static final String NI_DATA_ENABLE_PATH = "Tool.NiTool.1.Enable";
+    public static final String NI_DATA_URL_PATH = "Device.X_{OUI}_Tool.NITool.1.URL";
+
 
     public static final String GNBID_PATH = "Device.X_7C8334_gNodeBFunction.1.gNodeBCommon.gNBId";
     public static final String CELLID_PATH_SUFFIX = ".CellConfig.NR.RAN.RF.CellId";

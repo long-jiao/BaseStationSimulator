@@ -4,8 +4,6 @@ import com.cpe.simulator.message.ConcurrentManagement;
 import com.cpe.simulator.util.CommonUtil;
 import com.cpe.simulator.util.InformConstants;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.poi.hssf.record.DVALRecord;
 import org.dslforum.cwmp_1_0.Envelope;
 import org.dslforum.cwmp_1_0.EventStruct;
 import org.dslforum.cwmp_1_0.ParameterValueStruct;
@@ -75,8 +73,14 @@ public class HeartBeatSchedule {
     @Value("${omc.url}")
     private String omcUrl;
 
+    @Value("${reportNiData.enable:false}")
+    private boolean niDataEnable;
+
+    @Value("${reportNiData.reportInterval:15}")
+    private int niDataInterval;
+
     @Resource
-    private ThreadPoolTaskScheduler mrDataPoolManagement;
+    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
     @PostConstruct
     public void init() {
@@ -87,13 +91,24 @@ public class HeartBeatSchedule {
                 mrDataTaskRunable.setSerialNumber(it);
                 mrDataTaskRunable.setUploadFileDir(uploadFileDir);
                 mrDataTaskRunable.setUploadUrl(mrUploadUrlPrefix + it + "/");
-                mrDataPoolManagement.getScheduledExecutor().scheduleAtFixedRate(mrDataTaskRunable, 2, reportInterval, TimeUnit.MINUTES);
+                threadPoolTaskScheduler.getScheduledExecutor().scheduleAtFixedRate(mrDataTaskRunable, 2, reportInterval, TimeUnit.MINUTES);
             });
         }
         if (reportSonLog) {
             SonLogTaskRunable sonLogTaskRunable = new SonLogTaskRunable();
             sonLogTaskRunable.setUploadFileDir(uploadFileDir);
-            mrDataPoolManagement.getScheduledExecutor().scheduleAtFixedRate(sonLogTaskRunable, 2, 5, TimeUnit.MINUTES);
+            threadPoolTaskScheduler.getScheduledExecutor().scheduleAtFixedRate(sonLogTaskRunable, 2, 5, TimeUnit.MINUTES);
+        }
+
+        if (niDataEnable) {
+            String niUploadUrlPrefix = omcUrl.replace("acs", "api/httpfs/v1/upload/niData/");
+            registerEnbSn.forEach(it -> {
+                NiDataFileRunable niDataTaskRunable = new NiDataFileRunable();
+                niDataTaskRunable.setItemSn(it);
+                niDataTaskRunable.setUploadFileDir(uploadFileDir);
+                niDataTaskRunable.setUploadUrl(niUploadUrlPrefix + it + "/");
+                threadPoolTaskScheduler.getScheduledExecutor().scheduleAtFixedRate(niDataTaskRunable, 3, niDataInterval, TimeUnit.MINUTES);
+            });
         }
     }
 

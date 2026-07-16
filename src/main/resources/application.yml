@@ -46,7 +46,7 @@ mybatis-plus:
 cwmpver: cwmp_1_0
 
 BS:
-  Ip:
+  Ip: 172.16.4.247
 
 
 snFilePath: D:\BsSimulator\snRegister.xlsx
@@ -68,12 +68,12 @@ mrDataReport:
   interval: 15
 
 reportNiData:
-  enable: false
-  # 单位为毫秒900000,1800000,3600000
-  reportInterval: 900000
+  enable: true
+  # #单位分钟15,30,60
+  reportInterval: 1
 
 omc:
-  url: https://172.16.1.194:18443/acs
+  url: https://172.16.12.10:18443/acs
 
 cpe:
   paraValuePath: D:\BsSimulator\config\fullParaValue.txt

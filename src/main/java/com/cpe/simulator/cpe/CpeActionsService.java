@@ -48,6 +48,9 @@ public class CpeActionsService {
     @Value("${mrDataReport.switch}")
     private boolean mrDataReportSwitch;
 
+    @Value("${reportNiData.enable:false}")
+    private boolean niDataEnable;
+
     @Resource
     private ThreadPoolTaskExecutor processMsgPoolManagement;
 
@@ -58,7 +61,7 @@ public class CpeActionsService {
     private ThreadPoolTaskExecutor uploadFilePoolManagement;
 
     @Resource
-    private ThreadPoolTaskScheduler mrDataPoolManagement;
+    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
     @Value("${uploadFileDir:./config}")
     private String uploadFileDir;
@@ -224,6 +227,8 @@ public class CpeActionsService {
         ArrayList<ParameterValueStruct> nameList = setParameterValues.getParameterList().getParameterValueStruct();
         Map<String, Object> cellAvailabelStateParaPathToValue = new HashMap<>();
         boolean updateMrTask = false;
+        boolean updateNiDataTask = false;
+
         for (int i = 0; i < nameList.size(); i++) {
             ParameterValueStruct pvs = nameList.get(i);
             String paraName = pvs.getName();
@@ -241,6 +246,8 @@ public class CpeActionsService {
                 }
             } else if (paraName.contains(InformConstants.MRMGMT_ENABLE_PATH)) {
                 updateMrTask = true;
+            } else if (paraName.contains(InformConstants.NI_DATA_ENABLE_PATH)) {
+                updateNiDataTask = true;
             }
 
             cpeDBReader.setValue(sn, paraName, paraValue);
@@ -255,6 +262,10 @@ public class CpeActionsService {
         }
         if (updateMrTask && (!mrDataReportSwitch)) {
             updateMrTaskRunable(sn);
+        }
+
+        if (updateNiDataTask && (!niDataEnable)) {
+            updateNiDataTask(sn);
         }
 
         SetParameterValuesResponse valresp = new SetParameterValuesResponse();
@@ -516,13 +527,47 @@ public class CpeActionsService {
             mrDataTaskRunable.setUploadUrl(uploadUrl);
             mrDataTaskRunable.setUploadFileDir(uploadFileDir);
 
-            ScheduledFuture<?> future = mrDataPoolManagement.getScheduledExecutor().scheduleAtFixedRate(mrDataTaskRunable, delayMinutes, Integer.valueOf(uploadPeriod), TimeUnit.MINUTES);
+            ScheduledFuture<?> future = threadPoolTaskScheduler.getScheduledExecutor().scheduleAtFixedRate(mrDataTaskRunable, delayMinutes, Integer.valueOf(uploadPeriod), TimeUnit.MINUTES);
 
             CancelTaskRunable cancelTaskRunable = new CancelTaskRunable();
             cancelTaskRunable.setFuture(future);
             cancelTaskRunable.setSn(sn);
             ConcurrentManagement.SN_MR_TASK_FUTURE.put(sn, future);
-            mrDataPoolManagement.getScheduledExecutor().schedule(cancelTaskRunable, endDelayMinutes, TimeUnit.MINUTES);
+            threadPoolTaskScheduler.getScheduledExecutor().schedule(cancelTaskRunable, endDelayMinutes, TimeUnit.MINUTES);
+        } else {
+            if (ConcurrentManagement.SN_MR_TASK_FUTURE.containsKey(sn)) {
+                Future future = ConcurrentManagement.SN_MR_TASK_FUTURE.remove(sn);
+                future.cancel(false);
+            }
+        }
+    }
+
+    private void updateNiDataTask(String sn) {
+        String ouiValue = cpeDBReader.getValue(sn, InformConstants.MU_MANUFACTUREROUI);
+        String enablePath = InformConstants.NI_TOOL_ENABLE_PATH.replace("{OUI}", ouiValue);
+
+        String switchEnable = cpeDBReader.getValue(sn, enablePath);
+        if (switchEnable.equals(InformConstants.MRMGMT_ENABLE_OPEN_VALUE)) {
+            if (ConcurrentManagement.SN_NI_DATA_TASK_FUTURE.containsKey(sn)) {
+                Future future = ConcurrentManagement.SN_NI_DATA_TASK_FUTURE.remove(sn);
+                future.cancel(false);
+            }
+
+            NiDataFileRunable niDataFileTaskRunable = new NiDataFileRunable();
+            niDataFileTaskRunable.setItemSn(sn);
+            String uploadPeriodPath = InformConstants.NI_TOOL_PERIOD_UPLOAD_PATH.replace("{OUI}", ouiValue);
+            String uploadInterVal = cpeDBReader.getValue(sn, uploadPeriodPath);
+
+            int intervalMinutes = Integer.valueOf(uploadInterVal) / 15;
+            niDataFileTaskRunable.setUploadPeriod(String.valueOf(intervalMinutes));
+
+            String urlPath = InformConstants.NI_DATA_URL_PATH.replace("{OUI}", ouiValue);
+            String uploadUrl = cpeDBReader.getValue(sn, urlPath);
+            niDataFileTaskRunable.setUploadUrl(uploadUrl);
+            niDataFileTaskRunable.setUploadFileDir(uploadFileDir);
+
+            ScheduledFuture<?> future = threadPoolTaskScheduler.getScheduledExecutor().scheduleAtFixedRate(niDataFileTaskRunable, 1, intervalMinutes, TimeUnit.MINUTES);
+            ConcurrentManagement.SN_MR_TASK_FUTURE.put(sn, future);
         } else {
             if (ConcurrentManagement.SN_MR_TASK_FUTURE.containsKey(sn)) {
                 Future future = ConcurrentManagement.SN_MR_TASK_FUTURE.remove(sn);
