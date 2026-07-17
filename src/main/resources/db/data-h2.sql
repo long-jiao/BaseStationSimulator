@@ -11,3 +11,5 @@ INSERT INTO PERIODIC_Parameter (paraPath) values ('Device.DeviceInfo.MU.1.Softwa
 INSERT INTO PERIODIC_Parameter (paraPath) values ('Device.DeviceInfo.MU.1.ProvisioningCode');
 INSERT INTO PERIODIC_Parameter (paraPath) values ('Device.ManagementServer.ParameterKey');
 INSERT INTO PERIODIC_Parameter (paraPath) values ('Device.ManagementServer.ConnectionRequestURL');
+INSERT INTO PERIODIC_Parameter (paraPath) values ('Device.DeviceInfo.{OUI}_siteSerialNumber');
+

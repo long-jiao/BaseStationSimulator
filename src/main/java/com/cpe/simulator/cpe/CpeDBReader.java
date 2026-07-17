@@ -91,8 +91,9 @@ public class CpeDBReader implements Serializable {
         Object tempobj2 = classobj2.getBody().getObjects().get(0);
         ParameterValueList pvlist = ((GetParameterValuesResponse) tempobj2).getParameterList();
         List valuelist = pvlist.getParameterValueStruct();
-        List<String> bsType1SnList = registerEnbInfoList.stream().filter(it -> it.getStationType().equals(CommonConstans.BASESTATION_TYPE_BS5514)).map(it -> it.getSn()).collect(Collectors.toList());
-        for (String itemSn : bsType1SnList) {
+        List<RegisterEnbInfo> bsType1EnbInfoList = registerEnbInfoList.stream().filter(it -> it.getStationType().equals(CommonConstans.BASESTATION_TYPE_BS5514)).collect(Collectors.toList());
+        for (RegisterEnbInfo itemEnbInfo : bsType1EnbInfoList) {
+            String itemSn = itemEnbInfo.getSn();
             for (Iterator e = valuelist.iterator(); e.hasNext(); ) {
                 ParameterValueStruct pvs = (ParameterValueStruct) e.next();
                 String namestr = pvs.getName();
@@ -107,6 +108,10 @@ public class CpeDBReader implements Serializable {
             snToParaPathToValue.put(itemSn, "Device.ManagementServer.URL", omcUrl);
             snToParaPathToValue.put(itemSn, "Device.ManagementServer.ConnectionRequestURL", cpeUrlPrefix + itemSn);
             snToParaPathToValue.put(itemSn, InformConstants.MU_SERIALNUMBER, itemSn);
+
+            String ouiValue = "X_" + snToParaPathToValue.get(itemSn, InformConstants.MU_MANUFACTUREROUI);
+            String siteSnPath = InformConstants.SITE_SERIALNUMBER.replace("{OUI}", ouiValue);
+            snToParaPathToValue.put(itemSn, siteSnPath, itemEnbInfo.getSiteSn());
         }
 
         String xmlcontent2Type2 = deserialize(bs5524ValuePath);
@@ -115,8 +120,9 @@ public class CpeDBReader implements Serializable {
         Object tempobj2Type2 = classobj2Type2.getBody().getObjects().get(0);
         ParameterValueList pvlistType2 = ((GetParameterValuesResponse) tempobj2Type2).getParameterList();
         List valuelist2Type2 = pvlistType2.getParameterValueStruct();
-        List<String> bsType2SnList = registerEnbInfoList.stream().filter(it -> it.getStationType().equals(CommonConstans.BASESTATION_TYPE_BS5524)).map(it -> it.getSn()).collect(Collectors.toList());
-        for (String itemSn : bsType2SnList) {
+        List<RegisterEnbInfo> bsType2EnbInfoList = registerEnbInfoList.stream().filter(it -> it.getStationType().equals(CommonConstans.BASESTATION_TYPE_BS5524)).collect(Collectors.toList());
+        for (RegisterEnbInfo itemEnbInfo : bsType2EnbInfoList) {
+            String itemSn = itemEnbInfo.getSn();
             for (Iterator e = valuelist2Type2.iterator(); e.hasNext(); ) {
                 ParameterValueStruct pvs = (ParameterValueStruct) e.next();
                 String namestr = pvs.getName();
@@ -131,6 +137,10 @@ public class CpeDBReader implements Serializable {
             snToParaPathToValue.put(itemSn, "Device.ManagementServer.URL", omcUrl);
             snToParaPathToValue.put(itemSn, "Device.ManagementServer.ConnectionRequestURL", cpeUrlPrefix + itemSn);
             snToParaPathToValue.put(itemSn, InformConstants.MU_SERIALNUMBER, itemSn);
+
+            String ouiValue = "X_" + snToParaPathToValue.get(itemSn, InformConstants.MU_MANUFACTUREROUI);
+            String siteSnPath = InformConstants.SITE_SERIALNUMBER.replace("{OUI}", ouiValue);
+            snToParaPathToValue.put(itemSn, siteSnPath, itemEnbInfo.getSiteSn());
         }
     }
 

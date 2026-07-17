@@ -23,6 +23,7 @@ public class InformConstants {
     public static final String CONNECTION_REQUEST_URL = "Device.ManagementServer.ConnectionRequestURL";
 
     public static final String MU_SERIALNUMBER = "Device.DeviceInfo.MU.1.SerialNumber";
+    public static final String SITE_SERIALNUMBER = "Device.DeviceInfo.{OUI}_siteSerialNumber";
 
     public static final String MU_MANUFACTURER = "Device.DeviceInfo.MU.1.Manufacturer";
     public static final String MU_MANUFACTUREROUI = "Device.DeviceInfo.MU.1.ManufacturerOUI";
@@ -73,10 +74,10 @@ public class InformConstants {
     public static final String EXECUTE_DOWNLOAD = "1";
     public static final String NOT_EXECUTE_DOWNLOAD = "0";
 
-    public static final String NI_TOOL_ENABLE_PATH = "Device.X_{OUI}_Tool.NITool.1.Enable";
-    public static final String NI_TOOL_PERIOD_UPLOAD_PATH = "Device.X_{OUI}_Tool.NITool.1.PeriodicUploadInterval";
+    public static final String NI_TOOL_ENABLE_PATH = "Device.{OUI}_Tool.NITool.1.Enable";
+    public static final String NI_TOOL_PERIOD_UPLOAD_PATH = "Device.{OUI}_Tool.NITool.1.PeriodicUploadInterval";
     public static final String NI_DATA_ENABLE_PATH = "Tool.NiTool.1.Enable";
-    public static final String NI_DATA_URL_PATH = "Device.X_{OUI}_Tool.NITool.1.URL";
+    public static final String NI_DATA_URL_PATH = "Device.{OUI}_Tool.NITool.1.URL";
 
 
     public static final String GNBID_PATH = "Device.X_7C8334_gNodeBFunction.1.gNodeBCommon.gNBId";

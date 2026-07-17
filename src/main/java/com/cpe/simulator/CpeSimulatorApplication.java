@@ -113,6 +113,20 @@ public class CpeSimulatorApplication {
                         itemEnbInfo.setStationType(CommonConstans.BASESTATION_TYPE_BS5514);
                     }
                 }
+
+                XSSFCell siteSnCell = row.getCell(4);
+                if (Objects.isNull(siteSnCell)) {
+                    siteSnCell.setCellType(CellType.STRING);
+                    String siteSn = siteSnCell.getStringCellValue();
+                    if (CommonUtil.strHasLength(siteSn)) {
+                        itemEnbInfo.setSiteSn(siteSn);
+                    } else {
+                        itemEnbInfo.setSiteSn("XXXXXX");
+                    }
+                } else {
+                    itemEnbInfo.setSiteSn("XXXXXX");
+                }
+
                 enbSnList.add(itemEnbInfo);
                 ConcurrentManagement.BASE_STATION_SEND_DATA_LOCK.put(itemSn, new ReentrantLock());
             }

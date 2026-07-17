@@ -96,8 +96,9 @@ public class CpeActionsService {
         inform.setCurrentTime(new Date());
         inform.setRetryCount(0);
 
+        String ouiValue = cpeDBReader.getValue(sn, InformConstants.MU_MANUFACTUREROUI);
         deviceId.setManufacturer(cpeDBReader.getValue(sn, InformConstants.MU_MANUFACTURER));
-        deviceId.setOUI(cpeDBReader.getValue(sn, InformConstants.MU_MANUFACTUREROUI));
+        deviceId.setOUI(ouiValue);
         deviceId.setSerialNumber(sn);
         deviceId.setProductClass(cpeDBReader.getValue(sn, InformConstants.MU_PRODUCTCLASS));
 
@@ -108,8 +109,13 @@ public class CpeActionsService {
 
         List<Map<String, Object>> paraPathList = jdbcTemplate.queryForList("select paraPath from PERIODIC_Parameter");
         log.error("paraPathList size ....." + paraPathList.size());
+        String xOuiValue = "X_" + ouiValue;
         for (Map<String, Object> itemData : paraPathList) {
-            pList.add(itemData.get("paraPath").toString());
+            String paraPath = itemData.get("paraPath").toString();
+            if (paraPath.contains("{OUI}")) {
+                paraPath = paraPath.replace("{OUI}", xOuiValue);
+            }
+            pList.add(paraPath);
         }
 
 //        pList.add(InformConstants.ROOT_DATAMODEL_VERSION);
@@ -543,7 +549,7 @@ public class CpeActionsService {
     }
 
     private void updateNiDataTask(String sn) {
-        String ouiValue = cpeDBReader.getValue(sn, InformConstants.MU_MANUFACTUREROUI);
+        String ouiValue = "X_" + cpeDBReader.getValue(sn, InformConstants.MU_MANUFACTUREROUI);
         String enablePath = InformConstants.NI_TOOL_ENABLE_PATH.replace("{OUI}", ouiValue);
 
         String switchEnable = cpeDBReader.getValue(sn, enablePath);

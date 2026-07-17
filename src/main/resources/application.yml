@@ -73,7 +73,7 @@ reportNiData:
   reportInterval: 1
 
 omc:
-  url: https://172.16.12.10:18443/acs
+  url: https://172.16.12.47:18443/acs
 
 cpe:
   paraValuePath: D:\BsSimulator\config\fullParaValue.txt

@@ -8,4 +8,6 @@ public class RegisterEnbInfo {
     private String sn;
 
     private String stationType;
+
+    private String siteSn;
 }
