@@ -115,7 +115,7 @@ public class CpeSimulatorApplication {
                 }
 
                 XSSFCell siteSnCell = row.getCell(4);
-                if (Objects.isNull(siteSnCell)) {
+                if (Objects.nonNull(siteSnCell)) {
                     siteSnCell.setCellType(CellType.STRING);
                     String siteSn = siteSnCell.getStringCellValue();
                     if (CommonUtil.strHasLength(siteSn)) {
